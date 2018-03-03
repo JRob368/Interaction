@@ -23,9 +23,18 @@ Tile.prototype.draw = function (ctx) {
     this.background.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     for(var i = 0; i < this.paths.length; i++) {
         if(this.paths[i].direction === "north" || this.paths[i].direction === "south") {
-            this.northSouth.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+            if(this.paths[i].foodTrail) {
+                this.nSFood.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+            } else {
+                this.northSouth.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+            }
         } else {
-            this.eastWest.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+            if(this.paths[i].foodTrail) {
+                this.eWFood.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+
+            } else {
+                this.eastWest.drawFrame(this.game.clockTick, ctx, this.x + 8, this.y + 8);
+            }
         }
     }
 

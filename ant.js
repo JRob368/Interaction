@@ -43,7 +43,7 @@ Ant.prototype.returnHome = function() {
             for (i = 0; i < this.game.tiles.length; i++) {
                 if (this.intersects(this.game.tiles[i])) {
                     console.log("intersects");
-                    //this.game.tiles[i].paths.push({direction: this.direction});
+                    this.game.tiles[i].paths.push({direction: this.direction, foodTrail: true});
                 }
 
             }
@@ -72,7 +72,7 @@ Ant.prototype.forage = function() {
 
         for(i = 0; i < this.game.tiles.length; i++) {
             if(this.intersects(this.game.tiles[i])) {
-                this.game.tiles[i].paths.push({direction: this.direction});
+                this.game.tiles[i].paths.push({direction: this.direction, foodTrail: false});
             }
 
         }
