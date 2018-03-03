@@ -31,6 +31,7 @@ Timer.prototype.tick = function () {
 function GameEngine() {
     this.entities = [];
     this.tiles = [];
+    this.foods = [];
     this.showOutlines = false;
     this.ctx = null;
     this.click = null;
@@ -90,6 +91,9 @@ GameEngine.prototype.addEntity = function (entity) {
     this.entities.push(entity);
     if(entity instanceof Tile) {
         this.tiles.push(entity);
+    }
+    if(entity instanceof Food) {
+        this.foods.push(entity);
     }
 };
 

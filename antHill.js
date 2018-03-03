@@ -14,7 +14,7 @@ AntHill.prototype.constructor = AntHill;
 
 AntHill.prototype.update = function () {
     this.timer++;
-    if(this.timer >= 1000) {
+    if(this.timer >= 800) {
         this.timer = 0;
         var choice = Math.floor(Math.random() * this.directions.length);
         var direction = this.directions[choice];

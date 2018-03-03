@@ -15,6 +15,7 @@ function Ant(game,x,y, direction,antHill) {
     this.reverseDirections = this.buildReverseDirections();
     this.path = [{x: this.x, y: this.y, direction: this.direction}];
     this.lastCoord = {x: this.x, y: this.y};
+    this.tileCount = 0;
     this.foundFood = false;
     this.count = 0;
     this.home = antHill;
@@ -24,10 +25,6 @@ Ant.prototype = new Entity();
 Ant.prototype.constructor = Ant;
 
 Ant.prototype.update = function () {
-    this.count++;
-    if(this.count > 400) {
-        this.foundFood = true;
-    }
     if(this.foundFood) {
         this.returnHome();
     } else {
@@ -38,12 +35,12 @@ Ant.prototype.update = function () {
 };
 
 Ant.prototype.returnHome = function() {
+
     if(!this.intersects(this.home) || this.path.length >= 1) {
         if(Math.abs(this.x - this.lastCoord.x) >= 32 || Math.abs(this.y - this.lastCoord.y) >= 32) {
             for (i = 0; i < this.game.tiles.length; i++) {
                 if (this.intersects(this.game.tiles[i])) {
-                    console.log("intersects");
-                    this.game.tiles[i].paths.push({direction: this.direction, foodTrail: true});
+                    this.game.tiles[i].foodTrails.push({direction: this.direction});
                 }
 
             }
@@ -61,40 +58,84 @@ Ant.prototype.returnHome = function() {
     }
 };
 
-Ant.prototype.forage = function() {
-    var distance = this.game.clockTick * this.speed;
-
-    //If ant has moved 32 pixels choose a new direction and leave a path.
-    if(Math.abs(this.x - this.lastCoord.x) >= 32 || Math.abs(this.y - this.lastCoord.y) >= 32) {
-        var directions = this.getAvailableDirections(distance);
-        var choice = Math.floor(Math.random() * directions.length);
-        this.direction = directions[choice];
-
-        for(i = 0; i < this.game.tiles.length; i++) {
-            if(this.intersects(this.game.tiles[i])) {
-                this.game.tiles[i].paths.push({direction: this.direction, foodTrail: false});
-            }
-
-        }
-        this.lastCoord.x = this.x;
-        this.lastCoord.y = this.y;
-    }
-    //Move the ant in the right direction.
+Ant.prototype.willMoveOffScreen = function(distance) {
+    var willMoveOff = false;
     switch(this.direction) {
         case "north":
-            this.y -= distance;
+            if(this.y - distance < 0) {
+                willMoveOff = true;
+            }
             break;
         case "south":
-            this.y += distance;
+            if(this.y + distance > this.game.ctx.canvas.height - 32){
+                willMoveOff = true;
+            }
             break;
         case "west":
-            this.x -= distance;
+            if(this.x - distance < 0) {
+                willMoveOff = true;
+            }
             break;
         case "east":
-            this.x += distance;
+            if(this.x + distance > this.game.ctx.canvas.width - 32) {
+                willMoveOff = true;
+            }
             break;
     }
-    this.path.push({x: this.x, y: this.y, direction: this.direction});
+    return willMoveOff;
+};
+
+Ant.prototype.forage = function() {
+    //Check to see if the ant moved to food the last turn
+
+    for(i = 0; i < this.game.foods.length; i++) {
+        if(this.intersects(this.game.foods[i])) {
+            this.foundFood = true;
+            this.game.foods[i].size -= 2;
+        }
+
+    }
+
+    if(!this.foundFood) {
+        var distance = this.game.clockTick * this.speed;
+        //If ant has moved 3 tiles or will move off screen choose a new direction and leave a path.
+        if(this.willMoveOffScreen(distance) || this.tileCount >= 2) {
+            this.tileCount = 0;
+            var directions = this.getAvailableDirections(distance);
+            var choice = Math.floor(Math.random() * directions.length);
+            this.direction = directions[choice];
+        }
+
+        //Check which tile the ant is on and leave a path
+        if (Math.abs(this.x - this.lastCoord.x) >= 32 || Math.abs(this.y - this.lastCoord.y) >= 32) {
+            for (i = 0; i < this.game.tiles.length; i++) {
+                if (this.intersects(this.game.tiles[i])) {
+                    this.game.tiles[i].paths.push({direction: this.direction});
+                }
+
+            }
+            this.lastCoord.x = this.x;
+            this.lastCoord.y = this.y;
+            this.tileCount++;
+        }
+
+        //Move the ant in the right direction.
+        switch (this.direction) {
+            case "north":
+                this.y -= distance;
+                break;
+            case "south":
+                this.y += distance;
+                break;
+            case "west":
+                this.x -= distance;
+                break;
+            case "east":
+                this.x += distance;
+                break;
+        }
+        this.path.push({x: this.x, y: this.y, direction: this.direction});
+    }
 };
 
 Ant.prototype.buildReverseDirections = function() {

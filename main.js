@@ -84,7 +84,10 @@ ASSET_MANAGER.downloadAll(function () {
     createTiles(gameEngine);
 
     var antHill = new AntHill(gameEngine,416,416);
-
+    var food = new Food(gameEngine,256,256);
+    var food1 = new Food(gameEngine,384,384);
+    gameEngine.addEntity(food);
+    gameEngine.addEntity(food1);
     gameEngine.addEntity(antHill);
     gameEngine.init(ctx);
     gameEngine.start();
