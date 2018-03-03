@@ -15,9 +15,8 @@ function Ant(game,x,y, direction,antHill) {
     this.reverseDirections = this.buildReverseDirections();
     this.path = [{x: this.x, y: this.y, direction: this.direction}];
     this.lastCoord = {x: this.x, y: this.y};
-    this.tileCount = 0;
+    this.tileCount = 3;
     this.foundFood = false;
-    this.count = 0;
     this.home = antHill;
 }
 

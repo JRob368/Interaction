@@ -76,7 +76,6 @@ var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload("./img/tiles.png");
 ASSET_MANAGER.queueDownload("./img/ants.png");
 ASSET_MANAGER.queueDownload("./img/anthill.png");
-ASSET_MANAGER.queueDownload("./img/paths.png");
 ASSET_MANAGER.downloadAll(function () {
     var canvas = document.getElementById('gameWorld');
     var ctx = canvas.getContext('2d');

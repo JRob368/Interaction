@@ -2,10 +2,10 @@ function Tile(game,x,y,background) {
     Entity.call(this, game,x,y);
     this.background = background;
 
-    this.northSouth = new Animation(ASSET_MANAGER.getAsset("./img/paths.png"), 0, 0, 16, 16, 1, 0, true, false);
-    this.eastWest = new Animation(ASSET_MANAGER.getAsset("./img/paths.png"), 16, 0, 16, 16, 1, 0, true, false);
-    this.nSFood = new Animation(ASSET_MANAGER.getAsset("./img/paths.png"), 48, 0, 16, 16, 1, 0, true, false);
-    this.eWFood = new Animation(ASSET_MANAGER.getAsset("./img/paths.png"), 32, 0, 16, 16, 1, 0, true, false);
+    this.northSouth = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 0, 160, 16, 16, 1, 0, true, false);
+    this.eastWest = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 16, 160, 16, 16, 1, 0, true, false);
+    this.nSFood = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 48, 160, 16, 16, 1, 0, true, false);
+    this.eWFood = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 32, 160, 16, 16, 1, 0, true, false);
     this.paths = [];
     this.foodTrails = [];
     this.width =32;
