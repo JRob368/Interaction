@@ -8,7 +8,7 @@ function Food(game,x,y) {
     this.width = 32;
     this.height = 32;
     this.maxSize = 12;
-    this.size = 2;
+    this.size = 12;
 }
 
 Food.prototype = new Entity();

@@ -31,13 +31,76 @@ Ant.prototype.constructor = Ant;
 
 Ant.prototype.update = function () {
     if(this.foundFoodTrail) {
-
+        //this.foodTrail.splice(0,1);
+        this.followTrail();
     } else if(this.foundFood) {
         this.returnHome();
     } else {
         this.forage();
     }
     Entity.prototype.update.call(this);
+};
+
+Ant.prototype.followTrail = function() {
+
+    if(this.foodTrail.length > 0) {
+
+        if(this.distanceMoved >= 32) {
+            this.direction = this.foodTrail.pop().direction;
+
+
+            this.distanceMoved = 0;
+            this.path.push({x: this.x, y: this.y, direction: this.direction});
+            this.distanceMoved = 0;
+        }
+        var distance = this.speed;
+        this.distanceMoved += distance;
+        this.move(distance);
+    } else {
+        if(this.direction === "north") {this.y++;}
+        else if(this.direction === "south") {this.y--;}
+        else if(this.direction === "west") {this.x++;}
+        else {this.x--;}
+        this.checkAndConsumeFood();
+        this.path.pop();
+        if(this.foundFood) {
+            this.foundFoodTrail = false;
+
+        }
+        /*
+        for (var i = 0; i < this.game.foods.length; i++) {
+            console.log(this.game.foods[i].x + ' ' + this.game.foods[i].y)
+            if (this.y === this.game.foods[i].y) {
+                if (this.x === this.game.foods[i].x + 32) {
+                    console.log("intersects with food;");
+                    this.direction = "west";
+                    //foundFood = {found: true, direction: "west"};
+                } else if (this.x === this.game.foods[i] - 32) {
+                    console.log("intersects with food;");
+                    this.direction = "east";
+                    //foundFood = {found: true, direction: "east"};
+                }
+            } else if (this.x === this.game.foods[i].x) {
+                if (this.y === this.game.foods[i].y + 32) {
+                    console.log("intersects with food;");
+                    this.direction = "north";
+                    //foundFood = {found: true, direction: "north"};
+                } else if (this.y === this.game.foods[i].x - 32) {
+                    console.log("intersects with food;");
+                    this.direction = "south";
+                    //foundFood = {found: true, direction: "south"};
+                }
+            }
+        }
+        */
+        //this.path.push({x: this.x, y: this.y, direction: this.direction});
+        //var distance = this.speed;
+        //this.distanceMoved += distance;
+        //this.move(distance);
+        //console.log("in here" + this.x + " " + this.y);
+        //
+
+    }
 };
 
 Ant.prototype.returnHome = function() {
@@ -51,11 +114,11 @@ Ant.prototype.returnHome = function() {
             this.foodTrail.push(this.path.pop());
             this.distanceMoved = 0;
             for (var i = 0; i < this.game.tiles.length; i++) {
-                if (this.game.tiles[i].x === this.x && this.game.tiles[i].y ===this.y) {
+                if (this.game.tiles[i].x === this.x && this.game.tiles[i].y === this.y) {
                     if(this.gotLastPiece) {
                         this.game.tiles[i].foodTrails.length = 0;
                     } else {
-                        this.game.tiles[i].foodTrails.push({direction: this.direction});
+                        this.game.tiles[i].foodTrails.push({direction: this.direction, trail: this.foodTrail.slice(0)});
                     }
                 }
             }
@@ -124,6 +187,23 @@ Ant.prototype.willMoveOffScreen = function() {
     }
     return willMoveOff;
 };
+Ant.prototype.checkAndConsumeFood = function() {
+    for(var i = 0; i < this.game.foods.length; i++) {
+        var intersection = this.intersectsFood(this.game.foods[i]);
+        if(intersection.found === true) {
+            this.game.foods[i].size--;
+            this.foundFood = true;
+            this.foodTrail = [{x: this.x, y:this.y, direction: this.direction}];
+            this.justFoundFood = true;
+            if(this.game.foods[i].size === 0) {
+                console.log("got last piece");
+                this.gotLastPiece = true;
+            }
+            this.direction = intersection.direction;
+            this.distanceMoved = 32;
+        }
+    }
+};
 
 Ant.prototype.forage = function() {
     var distance = this.speed;
@@ -144,20 +224,7 @@ Ant.prototype.forage = function() {
         this.tileCount++;
         this.path.push({x: this.x, y: this.y, direction: this.direction});
         //check for food in surrounding tiles
-        for(var i = 0; i < this.game.foods.length; i++) {
-            var intersection = this.intersectsFood(this.game.foods[i]);
-            if(intersection.found === true) {
-                this.game.foods[i].size--;
-                this.foundFood = true;
-                this.justFoundFood = true;
-                if(this.game.foods[i].size === 0) {
-                    console.log("got last piece");
-                    this.gotLastPiece = true;
-                }
-                this.direction = intersection.direction;
-                this.distanceMoved = 32;
-            }
-        }
+        this.checkAndConsumeFood();
 
         var j = 0;
         var beenHere = false;
@@ -180,8 +247,10 @@ Ant.prototype.forage = function() {
         for (var i = 0; i < this.game.tiles.length; i++) {
             if (this.game.tiles[i].x === this.x && this.game.tiles[i].y ===this.y) {
                 if(this.game.tiles[i].foodTrails.length > 0) {
-                    console.log("found a food trail");
                     this.foundFoodTrail = true;
+                    this.foodTrail = this.game.tiles[i].foodTrails[0].trail.slice();
+                    this.foodTrail.pop();
+                    this.distanceMoved = 32;
                 } else {
                     for (var j = 0; j < this.game.tiles[i].paths.length; j++) {
                         if (this.game.tiles[i].paths[j].ant === this) {
