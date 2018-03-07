@@ -83,10 +83,16 @@ ASSET_MANAGER.downloadAll(function () {
     createTiles(gameEngine);
 
     var antHill = new AntHill(gameEngine,416,416);
-    var food = new Food(gameEngine,256,256);
-    var food1 = new Food(gameEngine,384,384);
-    gameEngine.addEntity(food);
-    gameEngine.addEntity(food1);
+    gameEngine.addEntity(new Food(gameEngine, 10 * 32, 10 * 32));
+    gameEngine.addEntity(new Food(gameEngine, 20 * 32, 20 * 32));
+    gameEngine.addEntity(new Food(gameEngine, 17 * 32, 17 * 32));
+    //for(var i = 0; i < 3; i++) {
+        //var x = Math.floor(Math.random() * 32);
+        //var y = Math.floor(Math.random() * 25);
+        //gameEngine.addEntity(new Food(gameEngine, x * 32, y * 32));
+        //console.log(x*32, + " " + y*32);
+    //}
+
     gameEngine.addEntity(antHill);
     gameEngine.init(ctx);
     gameEngine.start();

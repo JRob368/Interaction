@@ -123,6 +123,12 @@ GameEngine.prototype.update = function () {
             this.entities.splice(i, 1);
         }
     }
+
+    for (var i = this.foods.length - 1; i >= 0; --i) {
+        if (this.foods[i].removeFromWorld) {
+            this.foods.splice(i, 1);
+        }
+    }
 };
 
 GameEngine.prototype.loop = function () {

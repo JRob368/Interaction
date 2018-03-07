@@ -8,14 +8,14 @@ function Food(game,x,y) {
     this.width = 32;
     this.height = 32;
     this.maxSize = 12;
-    this.size = 12;
+    this.size = 2;
 }
 
 Food.prototype = new Entity();
 Food.prototype.constructor = Food;
 
 Food.prototype.update = function () {
-    if(this.size === 1) this.removeFromWorld = true;
+    if(this.size === 0) this.removeFromWorld = true;
 };
 
 Food.prototype.draw = function(ctx){
@@ -23,7 +23,7 @@ Food.prototype.draw = function(ctx){
         this.largeAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     } else if (this.size >= this.maxSize / 2) {
         this.mediumAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-    } else if(this.size >= this.maxSize / 4) {
+    } else if(this.size >= 2) {
         this.smallAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     } else {
         this.smallestAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
