@@ -11,6 +11,14 @@ window.requestAnimFrame = (function () {
             };
 })();
 
+function start() {
+    globalGame.isPaused = false;
+}
+
+function pause() {
+    globalGame.isPaused = true;
+    //this.GameEngine.pause();
+}
 
 function Timer() {
     this.gameTime = 0;
@@ -40,14 +48,13 @@ function GameEngine() {
     this.surfaceWidth = null;
     this.surfaceHeight = null;
     this.space = null;
-    this.A = null;
-    this.W = null;
-    this.S = null;
-    this.D = null;
-    this.I = null;
-    this.O = null;
+    this.isPaused = true;
+    this.hasStarted = false;
 }
 
+GameEngine.prototype.pause = function() {
+    this.isPaused = !this.isPaused;
+}
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
@@ -69,7 +76,7 @@ GameEngine.prototype.start = function () {
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
     var that = this;
-
+    /*
     this.ctx.canvas.addEventListener("keydown", function (e) {
         if (String.fromCharCode(e.which) === 'A') that.A = true;
         if (String.fromCharCode(e.which) === 'W') that.W = true;
@@ -82,7 +89,7 @@ GameEngine.prototype.startInput = function () {
 
         e.preventDefault();
     }, false);
-
+    */
     console.log('Input started');
 };
 
@@ -132,17 +139,16 @@ GameEngine.prototype.update = function () {
 };
 
 GameEngine.prototype.loop = function () {
-    this.clockTick = this.timer.tick();
-    this.update();
-    this.draw();
-    this.A = null;
-    this.W = null;
-    this.S = null;
-    this.D = null;
-    this.K = null;
-    this.I = null;
-    this.O = null;
-    this.space = null;
+    if(!this.isPaused) {
+        this.clockTick = this.timer.tick();
+        this.update();
+        this.draw();
+    } else if(!this.hasStarted) {
+        this.clockTick = this.timer.tick();
+        this.update();
+        this.draw();
+        this.hasStarted = true;
+    }
 };
 
 function Entity(game, x, y) {

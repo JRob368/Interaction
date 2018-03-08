@@ -54,7 +54,8 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-
+var globalGame;
+var foodPieces = 3;
 
 function createTiles(game) {
     for (var i = 0; i <= 32; i++) { //32
@@ -79,21 +80,40 @@ ASSET_MANAGER.queueDownload("./img/anthill.png");
 ASSET_MANAGER.downloadAll(function () {
     var canvas = document.getElementById('gameWorld');
     var ctx = canvas.getContext('2d');
-    var gameEngine = new GameEngine();
-    createTiles(gameEngine);
+    globalGame = new GameEngine();
+    loadGame();
+    globalGame.init(ctx);
+    globalGame.start();
 
-    var antHill = new AntHill(gameEngine,416,416);
-    gameEngine.addEntity(new Food(gameEngine, 10 * 32, 10 * 32));
-    gameEngine.addEntity(new Food(gameEngine, 20 * 32, 20 * 32));
-    gameEngine.addEntity(new Food(gameEngine, 17 * 32, 17 * 32));
-    //for(var i = 0; i < 3; i++) {
-        //var x = Math.floor(Math.random() * 32);
-        //var y = Math.floor(Math.random() * 25);
-        //gameEngine.addEntity(new Food(gameEngine, x * 32, y * 32));
-        //console.log(x*32, + " " + y*32);
-    //}
-
-    gameEngine.addEntity(antHill);
-    gameEngine.init(ctx);
-    gameEngine.start();
 });
+function setFoodPieces(desiredPieces) {
+    foodPieces = desiredPieces;
+}
+
+function restart() {
+    console.log("reloading game world");
+    globalGame.entities = [];
+    globalGame.tiles = [];
+    globalGame.foods = [];
+    globalGame.isPaused = true;
+    globalGame.hasStarted = false;
+    loadGame();
+}
+function loadGame() {
+
+    createTiles(globalGame);
+
+    var antHill = new AntHill(globalGame,416,416);
+    for(var i = 0; i < foodPieces; i++) {
+        var x = Math.floor(Math.random() * 32);
+        var y = Math.floor(Math.random() * 25);
+        if(x === 13 && y === 13) {
+            i--;
+        } else {
+            globalGame.addEntity(new Food(globalGame, x * 32, y * 32));
+        }
+    }
+
+    globalGame.addEntity(antHill);
+
+}

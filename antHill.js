@@ -1,7 +1,7 @@
 function AntHill(game,x,y) {
 
     this.animation = new Animation(ASSET_MANAGER.getAsset("./img/anthill.png"), 0, 0, 32, 32, 1, 0, true, false);
-    this.timer = 800;
+    this.timer = 798;
     Entity.call(this, game,x,y);
     this.directions = ["north","south","east","west"];
     this.width = 32;

@@ -14,7 +14,48 @@
 
 </head>
 <body>
+<h1>Honey Ants</h1>
+<p>This is a simulation of a colony of ants and their quest to find honey. Honey Ant's don't possess the same impressive
+    intelligence of most ant species, but they still manage to function as perfectly adequate ants and have somehow survived extinction.
+    When the ant world is first loaded 3 drops of honey are randomly generated around the map. Selecting a different food amount and restarting the game, will generate a new
+ant world with the selected number of random honey drops randomly generated around the map. An in-depth explanation
+of Honey Ant behavior is provided at the bottom of the page.<p>
 
+<div></div>
+<button name="Start" onclick="start();">Start</button>
+<button name="Pause" onclick="pause();">Pause</button>
+<button name="Reset" onclick="restart();">Reset</button>
+
+<p>Honey Drops to Generate:  <select name="FoodAmount">
+    <option value="1" onclick="setFoodPieces(1);">1</option>
+    <option value="3" onclick="setFoodPieces(3);">3</option>
+    <option value="5" onclick="setFoodPieces(5);">5</option>
+    <option value="7" onclick="setFoodPieces(7);">7</option>
+    <option value="9" onclick="setFoodPieces(9);">9</option>
+
+</select></p>
+<div></div>
     <canvas id="gameWorld" tabindex="1" width="1024" height="800" style="border: 1px solid brown; background: lightskyblue"></canvas>
 </body>
+<div></div>
+<p><b>Foraging: </b>
+    Ants exit the colony in a random direction and begin foraging for food, leaving a red pheromone trail as they search.
+    Honey ants aren't very efficient while foraging and will sometimes walk along their old path. Their senses aren't that
+    great and they can only find food in tiles that directly border their tile.
+    While foraging, they prefer to move three tiles before picking a new random direction to explore. If moving three tiles
+    will cause them to leave their world, they stop and pick a new direction to travel.
+</p>
+<p><b>Finding Food: </b>After finding food an ant will return home, cutting out any loops it may have taken in it's path.
+    While returning the ant leaves a purple pheromone trail for other ants to follow. Once an ant returns home any residual red pheromone
+    trails left by it will fade from the ant world. If an ant takes the last piece of honey at the food source it returns home
+    without leaving a trail. If an ant that followed a purple pheromone trail takes the last piece of honey at the food source
+    it will erase the trail that it followed on its route home.</p>
+
+<p><b>Discovering Food Trail: </b> If an ant discovers a purple pheromone trail while foraging it will follow the trail until
+    it reaches the food source or the trail ends. Because Honey Ants don't have great senses, they can only find purple trails
+    if they happen to stumble directly on top of one. While returning with food, or from a dead end, the ant will follow the path of the purple trail
+    until it reaches the point where it discovered it. The ant will then follow it's original red pheromone trail back to the nest,
+    cutting out any loops. If an ant follows a purple trail to a dead end it will immediately give up on finding food and return home,
+    abandoning its duties for the rest of the day. While returning home from a false trail, the Honey Ant erases it followed so no other ants
+    succumb to the same fate.</p>
 </html>

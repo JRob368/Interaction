@@ -300,7 +300,7 @@ Ant.prototype.intersectsFood = function(food) {
     } else if(this.x === food.x) {
         if(this.y === food.y + 32) {
             foundFood = {found: true, direction: "north"};
-        } else if(this.y === food.x - 32) {
+        } else if(this.y === food.y - 32) {
             foundFood = {found: true, direction: "south"};
         }
     }
