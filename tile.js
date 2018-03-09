@@ -6,7 +6,6 @@ function Tile(game,x,y,background) {
     this.eastWest = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 16, 160, 16, 16, 1, 0, true, false);
     this.nSFood = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 48, 160, 16, 16, 1, 0, true, false);
     this.eWFood = new Animation(ASSET_MANAGER.getAsset("./img/ants.png"), 32, 160, 16, 16, 1, 0, true, false);
-    this.paths = [];
     this.foodTrails = [];
     this.width =32;
     this.height = 32;

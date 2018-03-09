@@ -86,6 +86,9 @@ ASSET_MANAGER.downloadAll(function () {
     globalGame.start();
 
 });
+
+
+
 function setFoodPieces(desiredPieces) {
     foodPieces = desiredPieces;
 }
@@ -117,3 +120,32 @@ function loadGame() {
     globalGame.addEntity(antHill);
 
 }
+
+function start() {
+    globalGame.isPaused = false;
+}
+
+function pause() {
+    globalGame.isPaused = true;
+}
+
+function save() {
+    globalGame.isPaused = true;
+    var objects = globalGame.saveState();
+    var objectsString = JSON.stringify(objects);
+    socket.emit("save", { studentname: "James Roberts", statename: "aState", data: objectsString});
+    console.log("Simulation Saved");
+}
+
+function loadSave() {
+    socket.emit("load", { studentname: "James Roberts", statename: "aState" });
+    console.log("Attempting to Load");
+}
+
+var socket = io.connect("http://24.16.255.56:8888");
+
+socket.on("load", function (data) {
+    var objects = JSON.parse(data.data);
+    globalGame.loadSave(objects);
+    console.log("Loading Successful");
+});

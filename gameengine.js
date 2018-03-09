@@ -11,14 +11,7 @@ window.requestAnimFrame = (function () {
             };
 })();
 
-function start() {
-    globalGame.isPaused = false;
-}
 
-function pause() {
-    globalGame.isPaused = true;
-    //this.GameEngine.pause();
-}
 
 function Timer() {
     this.gameTime = 0;
@@ -51,10 +44,89 @@ function GameEngine() {
     this.isPaused = true;
     this.hasStarted = false;
 }
+GameEngine.prototype.loadSave = function(objects) {
+    this.entities = [];
+    this.tiles = [];
+    this.foods = [];
+    this.isPaused = true;
+    this.hasStarted = false;
+    var antHill;
+    var entity;
+    for(var i = 0; i < objects.length; i++) {
+        if(objects[i].type === "anthill") {
+            entity = new AntHill(this, objects[i].x, objects[i].y);
+            entity.timer = objects[i].time;
+            entity.food = objects[i].food;
+            antHill = entity;
+        } else if(objects[i].type === "food") {
+            entity = new Food(this, objects[i].x, objects[i].y);
+            entity.size = objects[i].size;
+        } else if(objects[i].type === "ant") {
+            entity = new Ant(this, objects[i].x, objects[i].y, objects[i].direction, antHill);
+            entity.path = objects[i].path;
+            entity.foodTrail = objects[i].foodTrail;
+            entity.tileCount = objects[i].tileCount;
+            entity.foundFood = objects[i].foundFood;
+            entity.foundFoodTrail = objects[i].foundFoodTrail;
+            entity.justFoundFood = objects[i].justFoundFood;
+            entity.eatingCount = objects[i].eatingCount;
+            entity.distanceMoved = objects[i].distanceMoved;
+            entity.badDir = objects[i].badDir;
+            entity.gotLastPiece = objects[i].gotLastPiece;
+            entity.foundBadTrail = objects[i].foundBadTrail;
+        } else if(objects[i].type === "tile") {
+            var background = new Animation(ASSET_MANAGER.getAsset("./img/tiles.png"), objects[i].background.startX, 0, 32, 32, 1, 0, true, false);
+            entity = new Tile(this, objects[i].x, objects[i].y, background);
+            entity.foodTrails = objects[i].foodTrails;
+            entity.paths = objects[i].paths;
+        }
+        this.addEntity(entity);
+    }
+
+    for(var i = 0; i < this.tiles.length; i++) {
+        if(this.tiles[i].paths.length > 0) {
+            for(var j = 0; j < this.tiles[i].paths.length; j++) {
+                var antIndex = this.tiles[i].paths[j].ant;
+                this.tiles[i].paths[j].ant = this.entities[antIndex];
+            }
+        }
+    }
+};
+
+GameEngine.prototype.saveState = function() {
+    var objects = [];
+    var info;
+    for(var i = 0; i < this.entities.length; i++) {
+        if(this.entities[i] instanceof AntHill) {
+            info = {type: "anthill", x: this.entities[i].x, y: this.entities[i].y,time: this.entities[i].timer,
+                food: this.entities[i].food};
+        } else if(this.entities[i] instanceof Food) {
+            info = {type: "food", x: this.entities[i].x, y: this.entities[i].y, size: this.entities[i].size};
+        } else if(this.entities[i] instanceof Ant) {
+            info = {type: "ant", x: this.entities[i].x, y: this.entities[i].y, direction: this.entities[i].direction,
+                path: this.entities[i].path, foodTrail: this.entities[i].foodTrail, tileCount: this.entities[i].tileCount,
+                foundFood: this.entities[i].foundFood, foundFoodTrail: this.entities[i].foundFoodTrail,
+                justFoundFood: this.entities[i].justFoundFood, eatingCount: this.entities[i].eatingCount,
+                distanceMoved: this.entities[i].distanceMoved, badDir: this.entities[i].badDir,
+                gotLastPiece: this.entities[i].gotLastPiece, foundBadTrail: this.entities[i].foundBadTrail};
+        } else {
+            info = {type: "tile", x: this.entities[i].x, y: this.entities[i].y, background: this.entities[i].background,
+                foodTrails: this.entities[i].foodTrails, paths: []};
+                if(this.entities[i].paths.length > 0) {
+                    for (var j = 0; j < this.entities[i].paths.length; j++) {
+                        info.paths.push({direction: this.entities[i].paths[j].direction, ant: this.entities.indexOf(this.entities[i].paths[j].ant)});
+                    }
+                }
+        }
+        objects.push(info);
+    }
+    return objects;
+};
 
 GameEngine.prototype.pause = function() {
     this.isPaused = !this.isPaused;
-}
+};
+
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
@@ -62,7 +134,7 @@ GameEngine.prototype.init = function (ctx) {
     this.startInput();
     this.timer = new Timer();
     console.log('game initialized');
-}
+};
 
 GameEngine.prototype.start = function () {
     console.log("starting game");

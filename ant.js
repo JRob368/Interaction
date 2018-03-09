@@ -229,7 +229,15 @@ Ant.prototype.forage = function() {
             if (this.game.tiles[i].x === this.x && this.game.tiles[i].y ===this.y) {
                 if(this.game.tiles[i].foodTrails.length > 0) {
                     this.foundFoodTrail = true;
-                    this.foodTrail = this.game.tiles[i].foodTrails[0].trail.slice();
+                    var shortest = this.game.tiles[i].foodTrails[0].trail.length;
+                    var shortestIndex = 0;
+                    for(var j = 1; j < this.game.tiles[i].foodTrails.length; j++) {
+                        if(this.game.tiles[j].foodTrails.length < shortest) {
+                            shortest = this.game.tiles[i].foodTrails[j].trail.length;
+                            shortestIndex = j;
+                        }
+                    }
+                    this.foodTrail = this.game.tiles[i].foodTrails[shortestIndex].trail.slice();
                     this.foodTrail.pop();
                     this.distanceMoved = 32;
                 } else {
