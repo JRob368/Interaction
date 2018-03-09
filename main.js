@@ -145,7 +145,11 @@ function loadSave() {
 var socket = io.connect("http://24.16.255.56:8888");
 
 socket.on("load", function (data) {
-    var objects = JSON.parse(data.data);
-    globalGame.loadSave(objects);
-    console.log("Loading Successful");
+    if(data !== null && data.data !== null) {
+        var objects = JSON.parse(data.data);
+        globalGame.loadSave(objects);
+        console.log("Loading Successful");
+    } else {
+        console.log("Load Failed");
+    }
 });
